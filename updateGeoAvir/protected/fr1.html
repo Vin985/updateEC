@@ -1,0 +1,974 @@
+<input type="text" style="display:none" class="shiny-bound-input" name="language" value="fr"/>
+<!-- navbar -->
+<nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+  <!--div class="navbar navbar-inverse navbar-fixed-top"-->
+  <!--div class="container"-->
+  <!--div class="container-fluid"-->
+  <div class="navbar-header">
+     <a href="#" class="navbar-brand">GeoAviRWeb</a>
+  </div>
+  <div>
+     <ul class="nav nav-pills pull-left navbar-nav">
+        <li><a href="info-fr.html">Départ</a></li>
+        <li><a href="historique-fr.html">Historique</a></li>
+        <li><a href="futur-fr.html">Futur</a></li>
+        <li><a href="equipe-fr.html">Équipe</a></li>
+        <li><a href="contact-fr.html">Commentaires</a></li>
+        <li><a href="citation-fr.html">Citation</a></li>
+     </ul>
+     <ul class="nav nav-pills pull-right navbar-nav">
+        <li><a href="analysis.html?lg=en">English</a></li>
+        <li class="active"><a href="#">Français</a></li>
+     </ul>
+  </div>
+</nav>
+<!-- end navbar -->
+<!-- container-fluid -->
+<div class="container-fluid">
+  <div class="row">
+     <!--div class="busy" style="display: none;">
+        <p>Calculs en cours...</p>
+        <img src="shinysky/busyIndicator/ajaxloaderq.gif" alt="">
+        </div-->
+     <!-- tabbable -->
+     <div class="tabbable">
+        <ul class="nav nav-tabs" style="margin-top:60px;">
+           <li id="lbl-step1" class="active"><a data-toggle="tab">Données</a></li>
+           <li id="lbl-step2"><a data-toggle="tab">Stratification spatiale</a></li>
+           <!--li id="lbl-step3"><a>Grille finale</a></li-->
+           <li id="lbl-step3"><a data-toggle="tab">Paramètres de distance</a></li>
+           <!--li id="lbl-step5" style="display:none"><a>Plot subset</a></li-->
+           <li id="lbl-step4"><a data-toggle="tab">Résultats de l'analyse</a></li>
+        </ul>
+        <!-- tab-content -->   
+        <div class="tab-content">
+           <!-- Step 1 tab -->
+           <div id="step1" class="tab-pane active" title="Step1">
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <div class="row">
+                       <h3 class="col-sm-12 col-md-12">Importer les Données :</h3>
+                    </div>
+                    <form class="form-horizontal">
+                       <div class="well">
+                         
+                          <!-- début radiogroup -->
+                          <div id="dataset" class="shiny-input-radiogroup shiny-input-container">
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3">Utiliser les données fictives intégrées</label>
+                                <div class="col-sm-1 col-md-1">
+                                   <input checked="checked" class="dataset shiny-bound-input" name="dataset" type="radio" value="TRUE" id="trueRadio">
+                                </div>
+                                <div class="col-sm-2 col-md-2">
+                                   <div class="shiny-html-output" id="embeddedDatasetDiv"></div>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3">Importer les données en format csv (séparateur= « ; »)</label>
+                                <div class="col-sm-1 col-md-1">
+                                   <input name="dataset" class="dataset shiny-bound-input" type="radio" value="FALSE" id="falseRadio"/>
+                                </div>
+                             </div>
+                             <!--input  class="testtest  shiny-bound-input" name="testtest"  type="radio" value="FALSE" id="testtest" />
+                             <button id="monbutton" class="monbutton">Bouton a cliquer</button-->
+
+                          </div>
+                          <!-- fin radiogroup -->
+                          
+                       </div>
+                       <!-- début charger fichier de données -->
+                       <div id="csvFile" class="well" style="display: none">
+                          <div class="row">
+                             <div class="col-sm-12 col-md-12">
+                                <h4>Chargement d'un fichier de données</h4>
+                                Cliquer pour charger un fichier de données (txt/csv) :
+                                <div class="form-group">
+                                   <div class="col-sm-5 col-md-5">
+                                      <input id="file1" type="file" accept="text/comma-separated-values" class="form-control">
+                                      <div id="file1_progress" class="progress progress-striped active shiny-file-input-progress">
+                                         <div class="progress-bar"></div>
+                                         <label></label>
+                                      </div>
+                                   </div>
+                                </div>
+                             </div>
+                             <div class="col-sm-12 col-md-12" id="file1Message"> </div>
+                          </div>
+                          
+                          <!-- début filtre optionnel -->
+                          <!-- début radiogroup -->
+                          <div class="row shiny-input-radiogroup shiny-input-container" id="filterdataset">
+                             <div class="col-sm-12 col-md-12">
+                                <div class="form-group">
+                                   <label class="control-label col-sm-3 col-md-3">Filtrer les données pour assurer la conformité avec le format ECSAS</label>
+                                   <div class="col-sm-1 col-md-1">
+                                      <input checked="checked" class="filterdataset shiny-bound-input" name="filterdataset" type="radio" value="TRUE" id="trueRadioFiltrerDataset">         
+                                   </div>
+                                </div>
+                                <div class="form-group">
+                                   <label class="control-label col-sm-3 col-md-3">Données déjà filtrées </label>
+                                   <div class="col-sm-1 col-md-1">
+                                      <input name="filterdataset" class="filterdataset shiny-bound-input" type="radio" value="FALSE" id="falseRadioFiltrerDataset">
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                          <!-- fin radiogroup -->
+                          
+                          <div class="alert alert-danger alert-dismissable">
+                             <button type="button" class="close" data-dismiss="alert">×</button>
+                             <strong>Note: </strong> Ce filtre enlève les lignes de données sans longueur de transect et sans coordonnées, s'assure que les classes de distance sont A,B,C,D seulement, et les remplace par leurs points médians respectifs. Il s'assure aussi que les variables latitude, longitude et longueur de transects sont de format numérique. Si vous n'utilisez pas ce filtre, vous devez vous assurer que les variables concernées sont nommées comme ci-dessous. 
+                          </div>
+                          <!-- fin filtre optionnel -->
+                       </div>
+                       <!-- fin charger fichier de données -->
+                       <div class="row">
+                          <div class="col-sm-4 col-md-4">
+                             <!--button id="loadDataButton" type="button" class="btn  action-button  btn-primary btn-block shiny-bound-input">Charger les données</button-->
+                             <button id="loadDataButton" type="button" class="action-button btn  btn-primary btn-block">Charger les données</button>
+                          </div>
+                       </div>
+                       <br>
+                       <div id="fileds" class="well">
+                          <div class="alert alert-info alert-dismissable">
+                             <button type="button" class="close" data-dismiss="alert">×</button>
+                             <strong>Note : </strong> Vos données doivent au moins comprendre les champs ci-dessous. Veuillez indiquer les champs dans vos données correspondants à ceux-ci.
+                          </div>
+                          <h4>Correspondance de champs</h4>
+                          <div id="mappings"></div>
+                          <div class="form-group">
+                             <label id="transect.id" class="shiny-bound-input col-sm-3 col-md-3 control-label"> 
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant l’identifiant de l’unité d’observation (transect, watch, etc.)">transect.id :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="transect.id.value"></div>
+                          </div>
+                          <div class="form-group">
+                             <label id="distance.field" class="shiny-bound-input col-sm-3 col-md-3 control-label"> 
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant la classe de distance associée aux détections">distance.field :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="distance.field.value"></div>
+                          </div>
+                          <div class="form-group">
+                             <label id="effort.field" class="shiny-bound-input col-sm-3 col-md-3 control-label"> 
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant la longueur de l’unité d’observation (km)">effort.field :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="effort.field.value"></div>
+                          </div>
+                          <div class="form-group">
+                             <label id="lat.field" class="shiny-bound-input col-sm-3 col-md-3 control-label"> 
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant la latitude des observations (DD)">lat.field :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="lat.field.value"></div>
+                          </div>
+                          <div class="form-group">
+                             <label id="long.field" class="shiny-bound-input col-sm-3 col-md-3 control-label"> 
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant la longitude des observations (DD)">long.field :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="long.field.value"></div>
+                          </div>
+                          <div class="form-group">
+                             <label id="sp.field" class="shiny-bound-input col-sm-3 col-md-3 control-label">   
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant l’identifiant des espèces">sp.field :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="sp.field.value"></div>
+                          </div>
+                          <div class="form-group">
+                             <label id="date.field" class="shiny-bound-input col-sm-3 col-md-3 control-label">   
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant la date des détections (YYYY-MM-DD)">date.field :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="date.field.value"></div>
+                          </div>
+                          <div class="form-group">
+                             <label id="count.field" class="shiny-bound-input col-sm-3 col-md-3 control-label">   
+                             <a href="#" class="tooltips" title="" data-original-title="Choisir le champ contenant le nombre d'individus de l'observation.">Count field :</a>
+                             </label>
+                             <div class="shiny-html-output col-sm-2 col-md-2" id="count.field.value"></div>
+                          </div>
+                       </div>
+                       <div class="row">
+                          <div class="col-sm-4 col-md-4">
+                             <button id="visualizeDataButton" type="button" class="btn action-button  btn btn-primary btn-block shiny-bound-input">Visualiser les données</button>
+                          </div>
+                       </div>
+                       
+                       
+                       <!--div class="container-fluid"-->
+                       <div class="row">
+                          <div class="col-sm-12 col-md-12">
+                             <h3>Visualisation des données:</h3>
+                          </div>
+                       </div>
+                       
+                       <div class="well">
+                          <div class="row">
+                             <div class="col-sm-12 col-md-12">
+                                <div id="uploadedFileContent" name="uploadedFileContent" class="datatables html-widget html-widget-output"></div>
+                             </div>
+                          </div>
+                       </div>
+                       <!--/div-->        
+                       <!-- fin dataset -->
+                       
+                       
+                       
+                       <!-- visualiser les données sur la carte -->
+                       <div class="row">
+                          <div class="col-sm-4 col-md-4">
+                             <button id="visualizeDataOnWorldMap" type="button" class="btn action-button  btn btn-primary btn-block shiny-bound-input">Visualiser les données sur la carte du monde</button>
+                          </div>
+                       </div>
+                       <!-- fin visualiser les données sur la carte -->
+                    
+                    <div class="row">
+                          <div class="col-sm-12 col-md-12"> 
+                             &nbsp;
+                          </div>
+                       </div>
+                       
+                       <div class="row">
+                          <div class="col-sm-12 col-md-12"> 
+                             &nbsp;
+                          </div>
+                       </div>
+                       
+                       <div class="row">
+                          <div class="col-sm-12 col-md-12"> 
+                             &nbsp;
+                          </div>
+                       </div>
+                       
+                       <div class="row">
+                          <div class="col-sm-12 col-md-12"> 
+                             &nbsp;
+                          </div>
+                       </div>
+                       
+                    </form>
+                 </div>
+              </div>
+              
+              
+           </div>
+           <!-- fin Step 1 tab -->
+           
+           
+           <!-- Step 2 tab: grid plot preview -->
+           <div id="step2" class="tab-pane container-fluid" title="Step2">
+              <!-- options de stratification -->
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <h4>Vous pouvez obtenir des résultats pour toute votre zone d'étude (aucune stratification), par zone dans votre zone d'étude en important un fichier de formes, ou par cellule d'une grille spatiale à partir des paramètres ci-dessous :</h4>
+                    <div class="alert alert-info alert-dismissable">
+                       <button type="button" class="close" data-dismiss="alert">×</button>
+                       <strong>Note : </strong> Vous pouvez obtenir des résultats globaux pour la zone d'étude à partir de l'analyse de distance à la page suivante en choisissant stratum = NULL.
+                    </div>
+                 </div>
+              </div>
+              
+              
+              <div class="row">  
+                <div class="well col-sm-12 col-md-12">
+                  <!-- début radiogroup -->
+                  <div id="stratification" class="shiny-input-radiogroup shiny-input-container">
+                    <div class="row">  
+                      <div class="col-sm-12 col-md-12">
+                         <div class="form-group"> 
+                            <label class="control-label col-sm-3 col-md-3">Stratification à l'aide d'une grille spatiale:</label> 
+                            <div class="col-sm-1 col-md-1"> 
+                               <input checked="checked" class="stratification shiny-bound-input" name="stratification" type="radio" value="stratgrille" id="stratgrille"> 
+                            </div>
+                         </div>
+                      </div> 
+                    </div>
+                  
+                    <div class="row">  
+                      <div class="col-sm-12 col-md-12">
+                         <div class="form-group"> 
+                            <label class="control-label col-sm-3 col-md-3">Stratification par zones particulières:</label> 
+                            <div class="col-sm-1 col-md-1">
+                               <input name="stratification" class="stratification shiny-bound-input" type="radio" value="stratzone" id="stratzone"> 
+                            </div> 
+                         </div> 
+                      </div>
+                   </div> 
+                  </div>
+                  <!-- fin radiogroup -->
+                </div>
+              </div>
+              
+              <!-- fin options de stratification -->
+              
+              <!-- grille spatiale -->          
+              <div class="row" id="grillespatiale">
+                 <div class="well col-sm-12 col-md-12">
+                    <h3>Grille spatiale :</h3>
+                    <div class="form-group row">
+                       <label class="control-label col-sm-2 col-md-2" for="gridsize">
+                       Taille des cellules :     
+                       </label>
+                       <div class="controls col-sm-5 col-md-5">
+                          <div class="row">
+                             <div class="col-sm-4 col-md-4">
+                                <input id="gridsize" name="gridsize" class="shiny-bound-input form-control" value="50000" type="number"> 
+                             </div>
+                             <div class="col-sm-2 col-md-2">
+                                mètres
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                    <div class="form-group row shiny-input-container shiny-input-radiogroup" id = "useHexgrid">
+                       <label class="control-label col-sm-2 col-md-2" for="gridsize">
+                       Grille hexagonale :     
+                       </label>
+                       <div class="controls col-sm-5 col-md-5">
+                         <div class="controls col-sm-2 col-md-2">
+                             <input class="distance shiny-bound-input" name="useHexgrid" type="radio" value="TRUE"> Oui
+                          </div>
+                          <div class="col-sm-1 col-md-1"></div>
+                          <div class="col-sm-2 col-md-2">
+                             <input checked="checked" class="distance shiny-bound-input" name="useHexgrid" type="radio" value="FALSE">  Non
+                          </div>
+                        </div>
+                       </div>
+                    <div class="form-group row ">
+                       <label class="control-label col-sm-2 col-md-2" for="latitude">
+                       Latitude :      
+                       </label>
+                       <div class="controls col-sm-4 col-md-4" id="latitude">
+                          <div class="row">
+                             <div class="col-sm-5 col-md-5">
+                                <input id="latitude1" name="latitude1" class="shiny-bound-input form-control" value="44" type="number">
+                             </div>
+                          </div>
+                          <div class="row">
+                             <div class="col-sm-5 col-md-5">
+                                <input id="latitude2" name="latitude2" class="shiny-bound-input form-control" value="52" type="number">
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                    <div class="form-group row ">
+                       <label class="control-label col-sm-2 col-md-2" for="longetude">
+                       Longitude :
+                       </label>
+                       <div class="controls col-sm-4 col-md-4">
+                          <div class="row">
+                             <div class="col-sm-5 col-md-5">
+                                <input id="longitude1" name="longitude1" class="col-sm-3 col-md-3 shiny-bound-input form-control" value="-70" type="number">
+                             </div>
+                          </div>
+                          <div class="row">
+                             <div class="col-sm-5 col-md-5">    
+                                <input id="longitude2" name="longitude2" class="col-sm-3 col-md-3 shiny-bound-input form-control" value="-56" type="number">
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                    <br>
+                    
+                    <div class="form-group row shiny-input-radiogroup shiny-input-container" id="clip">
+                       <div class="row">
+                          <label class="control-label col-sm-2 col-md-2" for="clip">
+                          Modifier la grille :
+                          </label>
+                          <div class="controls col-sm-3 col-md-3">
+                             <input checked="checked" class="distance shiny-bound-input" name="clip" type="radio" value="TRUE">  Oui (cela peut être long!)
+                          </div>
+                       </div>
+                       <div class="controls row">
+                          <div class="col-sm-2 col-md-2"></div>
+                          <div class="col-sm-3 col-md-3">
+                             <input checked="checked" class="distance shiny-bound-input" name="clip" type="radio" value="FALSE">  Non
+                          </div>
+                       </div>
+                    </div>
+                    
+                 </div>
+                 <div class="container-fluid">
+                    <div class="row">
+                       <div class="well col-sm-12 col-md-12">
+                          <div class="row">
+                             <div class="col-sm-12 col-md-12">
+                                <div class="alert alert-info alert-dismissable">
+                                   <button type="button" class="close" data-dismiss="alert">×</button>
+                                   <strong>Note : </strong> Associer les données avec les zones spatiales en utilisant les deux boutons ci-dessous.
+                                </div>
+                             </div>
+                          </div>
+                          <div class="row">
+                             <div class="col-sm-4 col-md-4">
+                                <div class="controls">
+                                   <button id="generateGridButton" type="button" class="btn action-button  btn btn-primary btn-block shiny-bound-input">Générer et visualiser la grille spatiale</button>
+                                </div>
+                             </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                             <div class="col-sm-4 col-md-4">
+                                <div class="controls">
+                                   <button id="generateFinalGridButton" type="button" class="btn action-button  btn btn-primary btn-block shiny-bound-input">Générer et visualiser la grille spatiale des cellules visitées</button>
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <!-- fin grille spatiale-->  
+              <!-- debut shapefile -->
+              <div class="row" id="stratfichierformes" style="display: none">
+                 <div class="well col-sm-12 col-md-12">
+                    <div class="row">
+                       <div class="col-sm-6 col-md-6">
+                          <form class="form-horizontal">
+                             <h4>Importez votre fichier de formes comportant les zones spatiales d’intérêt. Tous les fichiers associés au fichier de formes doivent être inclus dans un dossier compressé (.zip) :</h4>
+                             <div class="form-group">
+                                <div class="controls">
+                                   <input id="fileShapeFormes" type="file" accept="application/zip" class="form-control">
+                                   <div id="fileShapeFormes_progress" class="progress progress-striped active shiny-file-input-progress">
+                                      <div class="progress-bar"></div>
+                                      <label></label>
+                                   </div>
+                                </div>
+                             </div>
+                          </form>
+                       </div>
+                       <div class="col-sm-12 col-md-12" id="fileShapeFormesMessage"></div>
+                    </div>
+                 </div>
+              </div>
+              <!-- fin shapefile -->
+           </div>
+           <!-- end Step 2 tab -->
+           <!-- Step 3 tab -->
+           <div id="step3" class="tab-pane" title="Step3">
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <br>
+                    <div class="alert alert-info alert-dismissable">
+                       <button type="button" class="close" data-dismiss="alert">×</button>
+                       <strong>Note : </strong> Sélectionnez ou non les calculs de densités à l'aide de l'échantillonnage par distance, et définissez les paramètres qui serviront à modéliser la fonction de détection. 
+                    </div>
+                 </div>
+              </div>
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <div class="alert alert-info alert-dismissable">
+                       <button type="button" class="close" data-dismiss="alert">×</button>
+                       <strong>Note : </strong> Des informations apparaissent sur l'intrant demandé lorsque vous juxtaposez votre curseur à sa description.
+                    </div>
+                 </div>
+              </div>
+              
+              
+              <!-- distance analysis -->
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <div class="row">
+                       <h3 class="col-sm-12 col-md-12">Analyse de Distance :</h3>
+                    </div>
+                    <form class="well form-horizontal">
+                       <div class="shiny-input-radiogroup shiny-input-container" id="distanceAnalysis">
+                          <div class="form-group">
+                             <label class="control-label col-sm-3 col-md-3">Oui</label>
+                             <input checked="checked" class="distanceAnalysis shiny-bound-input col-sm-1 col-md-1" name="distanceAnalysis" type="radio" value="TRUE">
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label  col-sm-3 col-md-3">Non</label>
+                             <input class="distanceAnalysis shiny-bound-input col-sm-1 col-md-1" name="distanceAnalysis" type="radio" value="FALSE">
+                             <div class="col-sm-6 col-md-6">La sélection de ne pas tenir compte des distances procèdera avec un modèle de détection uniforme où on assume un taux de détection de 100%. Il faut donc tout de même choisir les options des paramètres de distance pour obtenir les résultats.
+                             </div>
+                          </div>
+                       </div>
+                    </form>
+                 </div>
+              </div>
+              <!-- fin distance analysis -->
+              
+              <!-- début radiogroup -->
+              <!--div id="dataset" class="shiny-input-radiogroup shiny-input-container">
+                 <div class="form-group">
+                    <label class="control-label col-sm-3 col-md-3">Utiliser les données fictives intégrées</label>
+                    <div class="col-sm-1 col-md-1">
+                       <input checked="checked" class="dataset shiny-bound-input" name="dataset" type="radio" value="TRUE" id="trueRadio">
+                    </div>
+                    <div class="col-sm-2 col-md-2">
+                       <div class="shiny-html-output" id="embeddedDatasetDiv"></div>
+                    </div>
+                 </div>
+                 <div class="form-group">
+                    <label class="control-label col-sm-3 col-md-3">Importer les données en format csv (séparateur= « ; »)</label>
+                    <div class="col-sm-1 col-md-1">
+                       <input name="dataset" class="dataset shiny-bound-input" type="radio" value="FALSE" id="falseRadio">
+                    </div>
+                 </div>
+              </div-->
+              <!-- fin radiogroup -->
+              
+              <!-- debut frequencies -->
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <div class="row">
+                       <div class="col-sm-12 col-md-12">
+                          <h3>Fréquence des espèces de la variable Alpha:</h3>
+                       </div>
+                    </div>
+                    <div class="well">
+                       
+                       <!--div class="row">
+                          <div class="col-sm-12 col-md-12">
+                             <form class="form-horizontal">
+                                <div class="shiny-html-output form-group" id="samplingUnitSection"></div>
+                             </form>
+                          </div>
+                       </div-->
+                       
+                       <div class="row">
+                          <div class="col-sm-4 col-md-4">
+                             <button id="freqButton" type="button" class="btn action-button  btn btn-primary btn-block shiny-bound-input">Visualiser les fréquences </button>
+                          </div>
+                       </div>
+                       <br>
+                       <div class="row">
+                          <div class="col-sm-12 col-md-12">
+                             <div class="alert alert-info alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert">×</button>
+                                <strong>Note : </strong> Il est fortement recommandé d’avoir &gt; 60-80 observations par espèce dont on veut obtenir des estimations de densité ou d’abondance.
+                             </div>
+                          </div>
+                       </div>
+                       <div class="row">
+                          <div class="col-sm-12 col-md-12">
+                             <div id="frequencyTable" name="frequencyTable" class="datatables html-widget html-widget-output"></div>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <!-- end frequencies -->
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <form class="form-horizontal">
+                       <div id="dparams">
+                          <h3>Paramètres de distance et de densité:</h3>
+                          <div class="alert alert-info alert-dismissable">
+                             <button type="button" class="close" data-dismiss="alert">×</button>
+                             <strong>Note : </strong> Pour l'instant l'unité d'échantillonnage considérée est le jour.
+                          </div>
+                          <div class="well">
+                             <div class="alert alert-info alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert">×</button>
+                                <strong>Note : </strong> Un modèle est lancé par classe et par sous-groupe. Choisissez combien de variables formeront les sous-groupes (Nb sous-groupes, limité à 1 pour l'instant), les variables qui formeront les sous-groupes et les catégories des sous-groupes à considérer. Au moins deux catégories doivent être sèlectionnées. Placez la souris au-dessus du titre du paramêtre pour obtenir des informations spécifiques.
+                             </div>
+                             
+                             <div class="shiny-html-output form-group" id="samplingUnitSection"></div>
+                             
+                             <div class="form-group ">
+                                <label class="control-label col-sm-3 col-md-3">Nbr sous-groupes :</label>
+                                <div class="shiny-html-output col-sm-2 col-md-2" id="nbVarsLsubSectionFixe">
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3">
+                                <a href="#" class="tooltips" title="" data-original-title="Choisir les champs qui définiront les sous-ensembles modélisés. Limité à un pour l’instant.">Sous-groupes :</a>        
+                                </label>
+                                <div class="controls row">
+                                   <div class="col-sm-2 col-md-2">
+                                      <div class="shiny-html-output" id="lsubs"></div>
+                                   </div>
+                                   <!--debut lsub categories-->
+                                   <div class="shiny-html-output col-sm-5 col-md-5" id="lsubsValues"> </div>
+                                  <!--end lsub categories-->
+                                </div>
+                             </div>
+                             <div class="shiny-html-output form-group" id="rareSection">
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3">
+                                <a href="#" class="tooltips" title="" data-original-title="Vous pouvez restreindre vos analyses à une période spécifique dans le temps. Identifiez les dates limites de la période visée ('YYYY-MM-DD',' YYYY-MM-DD ')">Period :</a>        
+                                </label>
+                                <div class="col-sm-2 col-md-2">
+                                   <div class="form-group">
+                                      <input class="shiny-bound-input form-control" id="period" value="NULL" name="daterange-picker" type="text" data-date-format="yyyy-mm-dd - yyyy-mm-dd">
+                                   </div>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3">
+                                <a href="#" class="tooltips" title="" data-original-title="Par défaut, le modèle inclut une stratification spatiale définie à l’étape précédente. Pour obtenir des résultats à l’échelle globale de la zone d’étude entière, utiliser la valeur NULLÉ">Stratum :</a>        
+                                </label>
+                                <div class="col-sm-2 col-md-2">
+                                   <div class="form-group">
+                                      <input class="shiny-bound-input form-control" id="stratum" value="STR_LABEL" type="text">
+                                   </div>
+                                </div>
+                             </div>
+                             <div class="shiny-html-output form-group" id="detectionSection">
+                             </div>
+                             <div class="shiny-html-output form-group" id="covariatesSection">
+                             </div>
+                             <div class="form-group">
+                                <div class="shiny-html-output" id="sectionForFactorSelectedValues">
+                                </div>
+                             </div>
+                             <div class="shiny-html-output form-group" id="estimatorSection">
+                             </div>
+                             <!-- begin multiplier --> 
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3">
+                                <a href="#" class="tooltips" title="" data-original-title="Le multiplicateur est 1 si les deux côtés du transect sont surveillés. Il a la valeur de 2 si seulement un côté est surveillé">Multiplier :</a>        
+                                </label>
+                                <div class="col-sm-2 col-md-2">
+                                   <input class="shiny-bound-input form-control" type="number" name="multiplier" value="2" min="0" max="100">
+                                </div>
+                             </div>
+                             <!-- end multiplier --> 
+                             <!-- begin breaks --> 
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3" for="nbrBreakClasses"><b>Nombre de classes de distances :</b></label>
+                                <div class="col-sm-2 col-md-2 shiny-html-output" id="nbrBreakClassesSection"></div>
+                                <!--div class="col-sm-2 col-md-2">
+                                   <input class="shiny-bound-input form-control" type="number" name="nbrBreakClasses" value="5" min="1" max="24">
+                                </div-->
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3" for="breakClasses"><a href="#" class="tooltips" title="" data-original-title="A vector giving the distance intervals in meters to be used in the analysis.">Classes de distance :</a>
+                                </label>
+                                <div class="well well-darker col-sm-5 col-md-5">
+                                   <div class="alert alert-info alert-dismissable">
+                                      <button type="button" class="close" data-dismiss="alert">×</button>
+                                      <strong>Note : </strong> <span class="shiny-html-output" id="breaksNote"></span>
+                                   </div>
+                                   <div id="breakClasses" class="shiny-html-output" name="breakClasses" style="width: 100%;"></div>
+                                </div>
+                             </div>
+                             <!-- end breaks -->
+                          </div>
+                       </div>
+                       <!--div id="titles" style="display:none" -->
+                       <div id="titles">
+                          <h4>Titre et sous-titre pour les sorties pdf des résultats d'analyse. Le nom des espèces sera imprimé automatiquement sur les pdf. Les résultats originaux du logiciel Distance seront sauvegardés au même endroit. Lorsqu'un sous-groupe est sélectionné, le sous-titre sera remplacé par le nom de ce sous-groupe.</h4>
+                          <div class="well">
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3">Titre :</label>
+                                <div class="col-sm-2 col-md-2">
+                                   <input id="plottitle" name="plottitle" class="shiny-bound-input form-control" type="text" value="ECSAS modelling">
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-sm-3 col-md-3"> Sous-titre :</label>
+                                <div class="col-sm-2 col-md-2">
+                                   <input id="plotsubtitle" name="plotsubtitle" class="shiny-bound-input form-control" value="Quebec extraction" type="text">
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                       <div id="distanceAnalysisI">
+                       </div>
+                       <!--div class="well"-->
+                       <div class="shiny-html-output" id="distanceButtons" name="distanceButtons" style="width: 100%; height: 40px"></div>
+                       <div class="shiny-html-output" id="resumePlotButtons" name="resumePlotButtons" style="width: 100%; height: 40px"></div>
+                       <!--/div-->
+                    </form>
+                 </div>
+              </div>
+              <!-- fin distance analyis params ex. tab 5 -->
+           </div>
+           <!-- fin Step 3 tab -->
+           <!-- Step 4 tab: Output plots tab -->
+           <div id="step4" class="tab-pane" title="Step4">
+              <br/>
+              <div class="row">
+                 <div class="col-sm-12 col-md-12">
+                    <div class="row">
+                       <div class="col-sm-6 col-md-6">
+                          <div class="well">
+                             <h4>Paramètres de cartographie :</h4>
+                             <h5>Densité par strate, cartographie et sauvegarde des résultats</h5>
+                             <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                   <label for="nbrArrond"><b>Nombre de décimales pour la légende des densités :</b></label>
+                                   <input id="nbrArrond" type="number" value="2" class="shiny-bound-input form-control">
+                                </div>
+                             </div>
+                             <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                   <label for="nbrCouleurs"><b>Nombre de couleurs pour le dégradé de la classification des densités :</b></label>
+                                   <input id="nbrCouleurs" type="number" min="1" step="1" max="12" value="3" class="shiny-bound-input form-control">
+                                </div>
+                             </div>
+                             <br>
+                             <div class="row">
+                                <label for="couleurs"><b>Couleurs :</b></label>
+                                <div class="well well-darker col-sm-12 col-md-12">
+                                   <div id="couleurs" class="shiny-html-output" name="couleurs" style="width: 100%;"></div>
+                                </div>
+                             </div>
+                             <!--classes -->
+                             <div class="row">
+                                <div id="classesSection" name="classesSection" class="shiny-html-output col-sm-12 col-md-12">
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                       <!-- begin density buttons -->                          
+                       <div class="col-sm-5 col-md-5">
+                          <div class="row">
+                             <button id="classificationButton" type="button" class="btn action-button btn-primary btn-block shiny-bound-input">(Re)Générer les boutons des données des densités</button>
+                          </div>
+                          <div class="row">
+                             <div id="densities" class="shiny-html-output col-sm-5 col-md-5" name="densities" style="width: 100%;"></div>
+                          </div>
+                       </div>
+                       <!-- end density buttons -->                          
+                    </div>
+                 </div>
+              </div>
+              <!-- end Step 4 tab -->   
+           </div>
+           <!-- end tab-content -->
+        </div>
+        <!-- end tabbable -->
+        <!--div></div-->
+     </div>
+  </div>
+</div>
+<!--/div-->
+<!-- end container-fluid -->
+<footer class="footer">
+  <!--div class="container-fluid"-->
+  <!-- Controls area -->
+  <div class="navbar navbar-inverse navbar-fixed-bottom" style="opacity: 0.95">
+     <div style="padding: 1px 2px;">
+        <button id="tab-back-btn" class="wizardnav-prev btn btn-default btn-lg" disabled="">
+        <i class="icon-chevron-left"></i>Précédent</button>
+        <button id="tab-next-btn" class="wizardnav-next btn btn-success btn-lg">
+        Suivant <i class="icon-chevron-right"></i></button>
+     </div>
+  </div>
+  <!--/div-->
+</footer>
+<!-- Place at bottom of page -->
+
+<!-- Load the navigation script when the whole page is loaded -->
+<script src="assets/js/xwizard.js" type="text/javascript"></script>
+<script>
+  //initialize
+  var $node = "";
+  
+  // Remove the parent element 
+  // jquery version:
+  $('#lsub1').on('click', '.removeVar', function(){
+  $(this).parent().parent().remove();
+    $('#ghost').keyup();
+  });
+  
+  
+  $('#addVar').on('click', function(){
+    $node = '<div class="control-group"><label label-default="label-default" class="control-label label-default col-md-3"></label><div class="controls"> <input type="text" /> <span class=" btn btn-danger removeVar"><i class="glyphicon glyphicon-minus icon-white"></i> Supprimer le paramètre</span> </div></div>';
+    
+  $(this).parent().parent().after($node);
+    
+  });
+  
+</script>
+
+<!-- begin Modal 1: visualise --> 
+<div id="modalProvinceVisualise" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog" style="width: 900px;">
+     <!-- Modal content-->
+     <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+           <h3 id="myModalLabel1">...</h3>
+        </div>
+        <div class="modal-body">
+           <div class="modal-body-messages">
+           </div>
+           <div id="plotProvinces" class="shiny-plot-output"  style="width: 100%; height: 400px">
+              <div style="height:200px">
+                 <span id="searching_spinner_center2" style="position: absolute;display: block;top: 50%;left: 50%;">
+                 </span>
+              </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</button>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- end Modal 1: visualise -->
+
+<!-- begin Modal 2: visualise final grid -->
+<div id="modalFinalGridVisualise" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog">
+     <!-- Modal content-->
+     <div class="modal-content" style="width: 900px;">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+           <h3 id="myModalLabel2">...</h3>
+        </div>
+        <div class="modal-body">
+           <div class="modal-body-messages">
+           </div>
+           <div id="finalgridplot" class="shiny-plot-output" name="finalgridplot" style="width: 100%; height: 400px">
+              <div style="height:200px">
+                 <span id="searching_spinner_center3" style="position: absolute;display: block;top: 50%;left: 50%;">
+                 </span>
+              </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</button>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- end Modal 2: visualise final grid-->
+
+<!-- begin Modal 3: visualise final grid -->
+<div id="modalGridVisualise" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog" style="width: 900px;">
+     <!-- Modal content-->
+     <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+           <h3 id="myModalLabel3">...</h3>
+        </div>
+        <div class="modal-body">
+           <div class="modal-body-messages">
+           </div>
+           <div id="gridplot" class="shiny-plot-output" name="gridplot" style="width: 100%; height: 400px">
+              <div style="height:200px">
+                 <span id="searching_spinner_center4" style="position: absolute;display: block;top: 50%;left: 50%;">
+                 </span>
+              </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</button>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- end Modal 3: visualise initial grid-->
+
+<!-- begin Modal 4: visualise model statistics -->
+<div id="modalVisualiserStatistiques" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog" style="width: 900px;">
+     <!-- Modal content-->
+     <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+           <h3 id="myModalLabel4">...</h3>
+        </div>
+        <div class="modal-body">
+           <div class="modal-body-messages">
+           </div>
+           <div class="row">
+              <div class="col-sm-12 col-md-12">
+                 <div id="distanceData" class="shiny-html-output" name="distanceData" style="width: 100%; height: 400px">
+                    <div style="height:200px">
+                       <span id="searching_spinner_center5" style="position: absolute;display: block;top: 50%;left: 50%;">
+                       </span>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</button>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- end Modal 4: visualise model statistics-->
+
+<!-- begin Modal 5: visualiser subset plot -->  
+<div id="modalVisualiserPlots" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel5" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog" style="width: 900px;">
+     <!-- Modal content-->
+     <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+           <h3 id="myModalLabel5">...</h3>
+        </div>
+        <div class="modal-body">
+           <div class="modal-body-messages">
+           </div>
+           <div class="row">
+              <div class="col-sm-12 col-md-12">
+                 <div id="distanceDataID" class="shiny-html-output" name="distanceDataID" style="width: 100%; height: 400px">
+                    <div style="height:200px">
+                       <span id="searching_spinner_center6" style="position: absolute;display: block;top: 50%;left: 50%;">
+                       </span>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</button>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- end Modal 5: visualiser density.map plot -->
+
+<!-- begin Modal 6: visualiser subset plot-->
+<div id="modalVisualiserDensityMapPlot" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel6" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog" style="width: 980px;">
+     <!-- Modal content-->
+     <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+           <h3 id="myModalLabel6">...</h3>
+        </div>
+        <div class="modal-body">
+           <div class="modal-body-messages">
+           </div>
+           <div class="row">
+              <div class="col-sm-12 col-md-12">
+                 <div id="visualizeDensityMapPlot" class="shiny-plot-output" name="visualizeDensityMapPlot">
+                    <div style="height:200px">
+                       <span id="searching_spinner_center7" style="position: absolute;display: block;top: 50%;left: 50%;"></span>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</button>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- end Modal 6: visualiser density.map plot-->
+<!-- begin Modal: loading -->
+<div id="myModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+     <!-- Modal content-->
+     <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true" disabled="disabled">×</button>
+           <h3 id="myModalLabel">Chargement en cours ...</h3>
+        </div>
+        <div class="modal-body">
+           <div class="modal-body-messages">
+           </div>
+           <div style="height:200px">
+              <span id="searching_spinner_center1" style="position: absolute;display: block;top: 50%;left: 50%;">
+              </span>
+           </div>
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</button>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- end Modal: loading -->
+<script src="assets/js/spinnervars.js" type="text/javascript"></script>
+
